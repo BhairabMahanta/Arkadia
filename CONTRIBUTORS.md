@@ -1,12 +1,12 @@
-# 🤝 Contributing to GameForge
+# 🤝 Contributing to Arkadia
 
-**Welcome to GameForge - GSSOC 2025! 🎮**
+**Welcome to Arkadia - GSSOC 2025! 🎮**
 
-Thank you for your interest in contributing to GameForge, the open source gaming community platform! Whether you're a beginner taking your first steps in open source or an experienced developer, we have exciting opportunities for you to learn, build, and make a real impact.
+Thank you for your interest in contributing to Arkadia, the open source gaming community platform! Whether you're a beginner taking your first steps in open source or an experienced developer, we have exciting opportunities for you to learn, build, and make a real impact.
 
-## 🌟 About GameForge & GSSOC 2025
+## 🌟 About Arkadia & GSSOC 2025
 
-GameForge is part of **GirlScript Summer of Code 2025**, designed to provide hands-on learning experiences in modern web development, game development, and community building. We're building the future of online gaming communities by creating an integrated platform where developers collaborate to build, share, and play games together.
+Arkadia is part of **GirlScript Summer of Code 2025**, designed to provide hands-on learning experiences in modern web development, game development, and community building. We're building the future of online gaming communities by creating an integrated platform where developers collaborate to build, share, and play games together.
 
 **What makes us special:**
 - 🎮 **Real Impact**: Your contributions will be used by actual gaming communities
@@ -26,11 +26,11 @@ GameForge is part of **GirlScript Summer of Code 2025**, designed to provide han
 ### 2. Fork & Clone
 ```bash
 # Fork the repository on GitHub, then:
-git clone https://github.com/YOUR_USERNAME/gameforge-platform.git
-cd gameforge-platform
+git clone https://github.com/YOUR_USERNAME/Arkadia.git
+cd Arkadia
 
 # Add upstream remote
-git remote add upstream https://github.com/ORIGINAL_OWNER/gameforge-platform.git
+git remote add upstream https://github.com/ORIGINAL_OWNER/Arkadia.git
 ```
 
 ### 3. Setup Development Environment
@@ -303,14 +303,14 @@ cp -r packages/bot/src/games/template packages/bot/src/games/your-game
 
 ### 📂 Understanding Our Modular Architecture
 
-GameForge uses a **complete isolation system** to ensure contributors never conflict with each other's work. Each game is a self-contained module across all packages.
+Arkadia uses a **complete isolation system** to ensure contributors never conflict with each other's work. Each game is a self-contained module across all packages.
 
 ### 🎮 Game Module Structure
 
 **Every new game follows this isolated pattern:**
 
 ```
-GameForge/
+Arkadia/
 ├── packages/
 │   ├── frontend/src/games/
 │   │   ├── trivia/           # Trivia game (complete isolation)
@@ -639,7 +639,7 @@ When adding new features:
 - **Quality over quantity** - Focus on doing good work, not just more work
 - **Have fun** - Enjoy building something amazing with fellow developers!
 
-**Welcome to GameForge! Let's build the future of gaming communities together! 🎮✨**
+**Welcome to Arkadia! Let's build the future of gaming communities together! 🎮✨**
 
 **Questions?** Reach out to our mentors or join the discussion in our community channels. We're here to help you succeed!
 
