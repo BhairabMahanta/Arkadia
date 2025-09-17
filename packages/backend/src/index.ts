@@ -80,13 +80,20 @@ app.post('/api/tournaments/:id/join', (req, res) => {
 });
 
 app.get('/api/tournaments/:id', (req, res) => {
-  const tournament = tournamentDB.getTournament(req.params.id);
-  if (tournament) {
+  try {
+    const tournament = tournamentDB.getTournament(req.params.id);
+
+    if (!tournament) {
+      return res.status(404).json({ error: 'Tournament not found' });
+    }
+
     res.json(tournament);
-  } else {
-    res.status(404).json({ error: 'Tournament not found' });
+  } catch (error) {
+    console.error("Error fetching tournament:", error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 // Socket.io connection handling
 io.on('connection', (socket) => {
