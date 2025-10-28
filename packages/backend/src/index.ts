@@ -4,7 +4,9 @@ import helmet from 'helmet';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import dotenv from 'dotenv';
+import jwt from 'jsonwebtoken';
 import { tournamentDB } from './database/tournaments';
+import { UserDatabase } from './database/users';
 
 dotenv.config();
 
@@ -18,6 +20,7 @@ const io = new Server(server, {
 });
 
 const PORT = process.env.PORT || 3001;
+const userDB = new UserDatabase();
 
 app.use(helmet());
 app.use(cors());
@@ -26,6 +29,98 @@ app.use(express.json());
 // Health check
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// Auth Routes
+app.post('/auth/signup', async (req, res) => {
+  try {
+    const { email, password, username } = req.body;
+
+    if (!email || !password || !username) {
+      return res.status(400).json({ error: 'Email, password, and username are required' });
+    }
+
+    const user = await userDB.createUser({ email, password, username });
+    const sanitizedUser = userDB.sanitizeUser(user);
+
+    const token = jwt.sign(
+      { userId: user.id, email: user.email },
+      process.env.JWT_SECRET || 'fallback_secret',
+      { expiresIn: '7d' }
+    );
+
+    res.status(201).json({
+      user: sanitizedUser,
+      token
+    });
+  } catch (error) {
+    console.error('Signup error:', error);
+    res.status(400).json({ error: error instanceof Error ? error.message : 'Signup failed' });
+  }
+});
+
+app.post('/auth/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required' });
+    }
+
+    const user = userDB.getUserByEmail(email);
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    const isValidPassword = await userDB.validatePassword(user, password);
+    if (!isValidPassword) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    const sanitizedUser = userDB.sanitizeUser(user);
+
+    const token = jwt.sign(
+      { userId: user.id, email: user.email },
+      process.env.JWT_SECRET || 'fallback_secret',
+      { expiresIn: '7d' }
+    );
+
+    res.json({
+      user: sanitizedUser,
+      token
+    });
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ error: 'Login failed' });
+  }
+});
+
+// Middleware to verify JWT
+const authenticateToken = (req: any, res: any, next: any) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).json({ error: 'Access token required' });
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET || 'fallback_secret', (err: any, user: any) => {
+    if (err) {
+      return res.status(403).json({ error: 'Invalid token' });
+    }
+    req.user = user;
+    next();
+  });
+};
+
+app.get('/auth/me', authenticateToken, (req, res) => {
+  const user = userDB.getUserById((req as any).user.userId);
+  if (!user) {
+    return res.status(404).json({ error: 'User not found' });
+  }
+
+  const sanitizedUser = userDB.sanitizeUser(user);
+  res.json({ user: sanitizedUser });
 });
 
 // Tournament Routes
